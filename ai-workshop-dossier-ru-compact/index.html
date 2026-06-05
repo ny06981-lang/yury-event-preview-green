@@ -191,10 +191,9 @@
       padding: 24px 26px 26px;
     }
 
-    .block.dark {
-      background: var(--ink);
-      color: var(--paper);
-      border-color: var(--ink);
+    .block.tinted {
+      background: var(--paper-dark);
+      border-color: var(--rule);
     }
 
     .block.wide { grid-column: span 2; }
@@ -212,7 +211,7 @@
       margin-bottom: 13px;
     }
 
-    .dark .marker { color: #efc9b9; }
+    .tinted .marker { color: var(--stamp); }
 
     .marker::before {
       content: "";
@@ -235,8 +234,6 @@
       font-size: 20px;
       line-height: 1.38;
     }
-
-    .dark p { color: rgba(245, 241, 232, .86); }
 
     .bullets {
       list-style: none;
@@ -358,14 +355,14 @@
     <article class="sheet">
       <header>
         <div class="brand">AI Coworking Lab</div>
-        <div class="stamp">Пилот · 90–120 мин</div>
+        <div class="stamp">AI Coworking · онлайн · 90–120 мин</div>
       </header>
 
       <section class="hero">
         <div>
-          <h1>От тревоги вокруг <em>AI</em><br>к рабочему сценарию</h1>
+          <h1>AI Coworking:<br>применяйте <em>AI</em> в работе</h1>
           <p class="lead">
-            Практический воркшоп для фрилансеров, создателей контента и владельцев малого бизнеса: не лекция про будущее, а работа с реальными задачами участников.
+            Практический воркшоп для фрилансеров, создателей контента и владельцев малого бизнеса: живое демо, разбор кейсов и работа с реальными задачами участников.
           </p>
         </div>
         <aside class="photo-card">
@@ -379,8 +376,8 @@
 
       <section class="spec">
         <div class="spec-item">
-          <div class="label">Формат</div>
-          <div class="value">демо + практика</div>
+          <div class="label">Сессия</div>
+          <div class="value">онлайн-демо + практика</div>
         </div>
         <div class="spec-item">
           <div class="label">Группа</div>
@@ -391,18 +388,12 @@
           <div class="value">начальный / средний</div>
         </div>
         <div class="spec-item">
-          <div class="label">Пилот</div>
-          <div class="value">бесплатный пилот</div>
+          <div class="label">Формат</div>
+          <div class="value">AI Coworking</div>
         </div>
       </section>
 
       <section class="grid">
-        <div class="block dark">
-          <div class="marker">Почему сейчас</div>
-          <h2>AI уже рядом, но у многих нет понятного входа.</h2>
-          <p>Люди чувствуют FOMO: понимают, что AI важен, но не знают, какие инструменты пробовать и как применить их к своей работе.</p>
-        </div>
-
         <div class="block">
           <div class="marker">Как проходит</div>
           <h2>Короткий контекст, живое демо и работа за ноутбуком.</h2>
@@ -416,18 +407,18 @@
         </div>
 
         <div class="block">
+          <div class="marker">Ценность для Impact Hub</div>
+          <h2>Практичный AI-формат для команды.</h2>
+          <p>Ценность для участников, вовлечение команды, позиционирование вокруг AI и основа для возможной серии встреч.</p>
+        </div>
+
+        <div class="block tinted wide">
           <div class="marker">Что забирают участники</div>
           <ul class="bullets">
             <li><span class="num">01</span><span>один рабочий AI-сценарий на своей задаче</span></li>
             <li><span class="num">02</span><span>готовые промпты и практические приёмы</span></li>
             <li><span class="num">03</span><span>понимание, как продолжать без хаотичных экспериментов</span></li>
           </ul>
-        </div>
-
-        <div class="block">
-          <div class="marker">Ценность для Impact Hub</div>
-          <h2>Практичный AI-ивент для комьюнити.</h2>
-          <p>Ценность для участников, вовлечение сообщества, позиционирование вокруг AI и тест формата для возможной серии встреч.</p>
         </div>
 
         <div class="block wide">
@@ -439,22 +430,10 @@
           </div>
         </div>
 
-        <div class="block wide">
-          <div class="split">
-            <div>
-              <div class="marker">Со стороны Impact Hub</div>
-              <p>Площадка, продвижение, регистрация, соцсети и поддержка комьюнити.</p>
-            </div>
-            <div>
-              <div class="marker">С нашей стороны</div>
-              <p>Контент, фасилитация, живое демо, материалы и сопровождение после сессии.</p>
-            </div>
-          </div>
-        </div>
       </section>
 
       <footer>
-        <div>Следующий шаг: короткая встреча, чтобы финализировать формат, аудиторию и дату пилота.</div>
+        <div>AI Coworking · онлайн-воркшоп на 90–120 минут</div>
         <div><a href="mailto:chikhalov@gmail.com">chikhalov@gmail.com</a> · LinkedIn: Юрий + партнёр</div>
       </footer>
     </article>
