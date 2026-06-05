@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Coworking Lab · Compact RU</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;1,6..72,500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #f5f1e8;
+      --paper-dark: #ede7d9;
+      --ink: #101824;
+      --muted: #5b6371;
+      --stamp: #9a2a2a;
+      --rule: #c9c0ab;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100vh;
+      background: #2a2724;
+      color: var(--ink);
+      font-family: "IBM Plex Sans", system-ui, sans-serif;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 38px 18px 72px;
+    }
+
+    .sheet {
+      width: 1240px;
+      min-height: 1754px;
+      max-width: 100%;
+      background:
+        radial-gradient(circle at 1px 1px, rgba(201, 192, 171, .45) 1px, transparent 1.5px) 0 0 / 18px 18px,
+        var(--paper);
+      box-shadow: 0 22px 86px rgba(0, 0, 0, .44);
+      padding: 60px 76px 54px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--ink);
+    }
+
+    .brand {
+      font-family: "Newsreader", Georgia, serif;
+      font-size: 34px;
+      line-height: 1;
+      font-weight: 600;
+      letter-spacing: -.01em;
+    }
+
+    .stamp {
+      border: 2px solid var(--stamp);
+      color: var(--stamp);
+      background: var(--paper);
+      padding: 8px 16px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      transform: rotate(-2deg);
+      white-space: nowrap;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 246px;
+      gap: 34px;
+      align-items: end;
+      margin-top: 8px;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: "Newsreader", Georgia, serif;
+      font-size: 76px;
+      line-height: .98;
+      font-weight: 600;
+      letter-spacing: -.025em;
+    }
+
+    h1 em {
+      color: var(--stamp);
+      font-style: italic;
+    }
+
+    .lead {
+      max-width: 860px;
+      margin: 22px 0 0;
+      font-family: "Newsreader", Georgia, serif;
+      font-size: 29px;
+      line-height: 1.25;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    .photo-card {
+      border: 1px solid var(--ink);
+      background: var(--paper);
+      padding: 14px;
+    }
+
+    .photo-card img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      display: block;
+      filter: grayscale(1) contrast(1.04);
+      border: 1px solid var(--rule);
+    }
+
+    .person {
+      margin-top: 12px;
+      font-size: 15px;
+      line-height: 1.35;
+      color: var(--muted);
+    }
+
+    .person strong {
+      display: block;
+      font-family: "Newsreader", Georgia, serif;
+      font-size: 28px;
+      line-height: 1.05;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+
+    .spec {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      padding: 20px 24px;
+      background: var(--paper-dark);
+      border: 1px solid var(--rule);
+    }
+
+    .spec-item {
+      border-left: 1px solid var(--rule);
+      padding-left: 18px;
+    }
+
+    .spec-item:first-child {
+      border-left: 0;
+      padding-left: 0;
+    }
+
+    .label {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      margin-bottom: 7px;
+    }
+
+    .value {
+      font-family: "Newsreader", Georgia, serif;
+      font-size: 28px;
+      line-height: 1.08;
+      font-weight: 600;
+      letter-spacing: -.01em;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px 34px;
+    }
+
+    .block {
+      border: 1px solid var(--ink);
+      background: rgba(245, 241, 232, .92);
+      padding: 24px 26px 26px;
+    }
+
+    .block.dark {
+      background: var(--ink);
+      color: var(--paper);
+      border-color: var(--ink);
+    }
+
+    .block.wide { grid-column: span 2; }
+
+    .marker {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 13px;
+      color: var(--stamp);
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 13px;
+    }
+
+    .dark .marker { color: #efc9b9; }
+
+    .marker::before {
+      content: "";
+      width: 18px;
+      height: 1px;
+      background: currentColor;
+    }
+
+    h2 {
+      margin: 0 0 10px;
+      font-family: "Newsreader", Georgia, serif;
+      font-size: 38px;
+      line-height: 1.02;
+      font-weight: 600;
+      letter-spacing: -.018em;
+    }
+
+    p {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.38;
+    }
+
+    .dark p { color: rgba(245, 241, 232, .86); }
+
+    .bullets {
+      list-style: none;
+      padding: 0;
+      margin: 4px 0 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    .bullets li {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 10px;
+      font-size: 20px;
+      line-height: 1.28;
+      border-bottom: 1px solid var(--rule);
+      padding-bottom: 10px;
+    }
+
+    .bullets li:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .num {
+      font-family: "Newsreader", Georgia, serif;
+      font-size: 25px;
+      line-height: 1;
+      color: var(--stamp);
+      font-style: italic;
+    }
+
+    .topics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 2px;
+    }
+
+    .topic {
+      border: 1px solid var(--ink);
+      background: var(--paper);
+      padding: 14px 15px;
+    }
+
+    .topic strong {
+      display: block;
+      font-family: "Newsreader", Georgia, serif;
+      font-size: 25px;
+      line-height: 1.08;
+      letter-spacing: -.01em;
+      margin-bottom: 5px;
+    }
+
+    .topic span {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.25;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .chip {
+      border: 1px solid var(--ink);
+      background: var(--paper);
+      padding: 5px 10px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      letter-spacing: .07em;
+    }
+
+    footer {
+      margin-top: auto;
+      padding-top: 18px;
+      border-top: 1px solid var(--rule);
+      display: flex;
+      justify-content: space-between;
+      gap: 22px;
+      align-items: baseline;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 13px;
+      line-height: 1.45;
+      letter-spacing: .04em;
+    }
+
+    footer a {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    @media (max-width: 900px) {
+      .page { padding: 18px 10px 46px; }
+      .sheet { padding: 28px 20px 34px; min-height: auto; gap: 22px; }
+      header, footer { flex-direction: column; align-items: flex-start; }
+      .hero, .grid, .spec, .topics, .split { grid-template-columns: 1fr; }
+      .block.wide { grid-column: span 1; }
+      h1 { font-size: 54px; }
+      .lead { font-size: 24px; }
+      .photo-card { max-width: 280px; }
+      .spec-item { border-left: 0; padding-left: 0; border-top: 1px solid var(--rule); padding-top: 14px; }
+      .spec-item:first-child { border-top: 0; padding-top: 0; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <article class="sheet">
+      <header>
+        <div class="brand">AI Coworking Lab</div>
+        <div class="stamp">Пилот · 90–120 мин</div>
+      </header>
+
+      <section class="hero">
+        <div>
+          <h1>От тревоги вокруг <em>AI</em><br>к рабочему сценарию</h1>
+          <p class="lead">
+            Практический воркшоп для фрилансеров, создателей контента и владельцев малого бизнеса: не лекция про будущее, а работа с реальными задачами участников.
+          </p>
+        </div>
+        <aside class="photo-card">
+          <img src="iurii.jpg" alt="Юрий Чихалов">
+          <div class="person">
+            <strong>Юрий Чихалов</strong>
+            предприниматель · AI-специалист · фасилитатор бизнес-сессий
+          </div>
+        </aside>
+      </section>
+
+      <section class="spec">
+        <div class="spec-item">
+          <div class="label">Формат</div>
+          <div class="value">демо + практика</div>
+        </div>
+        <div class="spec-item">
+          <div class="label">Группа</div>
+          <div class="value">около 15 человек</div>
+        </div>
+        <div class="spec-item">
+          <div class="label">Уровень</div>
+          <div class="value">начальный / средний</div>
+        </div>
+        <div class="spec-item">
+          <div class="label">Пилот</div>
+          <div class="value">бесплатный пилот</div>
+        </div>
+      </section>
+
+      <section class="grid">
+        <div class="block dark">
+          <div class="marker">Почему сейчас</div>
+          <h2>AI уже рядом, но у многих нет понятного входа.</h2>
+          <p>Люди чувствуют FOMO: понимают, что AI важен, но не знают, какие инструменты пробовать и как применить их к своей работе.</p>
+        </div>
+
+        <div class="block">
+          <div class="marker">Как проходит</div>
+          <h2>Короткий контекст, живое демо и работа за ноутбуком.</h2>
+          <p>Участники приносят свои задачи, разбирают кейсы в группе и собирают первый применимый AI-сценарий.</p>
+          <div class="chips">
+            <span class="chip">контент</span>
+            <span class="chip">автоматизация</span>
+            <span class="chip">исследование клиентов</span>
+            <span class="chip">продуктивность</span>
+          </div>
+        </div>
+
+        <div class="block">
+          <div class="marker">Что забирают участники</div>
+          <ul class="bullets">
+            <li><span class="num">01</span><span>один рабочий AI-сценарий на своей задаче</span></li>
+            <li><span class="num">02</span><span>готовые промпты и практические приёмы</span></li>
+            <li><span class="num">03</span><span>понимание, как продолжать без хаотичных экспериментов</span></li>
+          </ul>
+        </div>
+
+        <div class="block">
+          <div class="marker">Ценность для Impact Hub</div>
+          <h2>Практичный AI-ивент для комьюнити.</h2>
+          <p>Ценность для участников, вовлечение сообщества, позиционирование вокруг AI и тест формата для возможной серии встреч.</p>
+        </div>
+
+        <div class="block wide">
+          <div class="marker">Темы на выбор</div>
+          <div class="topics">
+            <div class="topic"><strong>AI для продуктивности</strong><span>личные процессы, рутина, планирование</span></div>
+            <div class="topic"><strong>Контент и коммуникации</strong><span>тексты, маркетинг, бренд, аутрич</span></div>
+            <div class="topic"><strong>Автоматизация</strong><span>связка инструментов и повторяемые процессы</span></div>
+          </div>
+        </div>
+
+        <div class="block wide">
+          <div class="split">
+            <div>
+              <div class="marker">Со стороны Impact Hub</div>
+              <p>Площадка, продвижение, регистрация, соцсети и поддержка комьюнити.</p>
+            </div>
+            <div>
+              <div class="marker">С нашей стороны</div>
+              <p>Контент, фасилитация, живое демо, материалы и сопровождение после сессии.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        <div>Следующий шаг: короткая встреча, чтобы финализировать формат, аудиторию и дату пилота.</div>
+        <div><a href="mailto:chikhalov@gmail.com">chikhalov@gmail.com</a> · LinkedIn: Юрий + партнёр</div>
+      </footer>
+    </article>
+  </main>
+</body>
+</html>
