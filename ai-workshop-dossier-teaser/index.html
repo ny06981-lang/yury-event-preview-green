@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Coworking Lab · Partner Teaser</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #f6f1e7;
+      --paper-2: #ebe2d0;
+      --ink: #111820;
+      --muted: #626974;
+      --accent: #9a2a2a;
+      --line: #bfb39e;
+      --green: #1f6f55;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #282521;
+      color: var(--ink);
+      font-family: "IBM Plex Sans", system-ui, sans-serif;
+    }
+
+    .stage {
+      min-height: 100vh;
+      padding: 32px 18px 64px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .sheet {
+      width: min(1180px, 100%);
+      min-height: 1500px;
+      background:
+        radial-gradient(circle at 1px 1px, rgba(191, 179, 158, .45) 1px, transparent 1.5px) 0 0 / 22px 22px,
+        var(--paper);
+      box-shadow: 0 24px 90px rgba(0, 0, 0, .42);
+      padding: clamp(30px, 5vw, 66px);
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      gap: 28px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      border-bottom: 3px solid var(--ink);
+      padding-bottom: 18px;
+    }
+
+    .brand {
+      font-family: "Newsreader", Georgia, serif;
+      font-size: clamp(34px, 5vw, 54px);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    .stamp {
+      border: 2px solid var(--accent);
+      color: var(--accent);
+      padding: 10px 16px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: clamp(11px, 1.5vw, 15px);
+      font-weight: 600;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+      transform: rotate(-2deg);
+      white-space: nowrap;
+      background: var(--paper);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) 330px;
+      gap: 42px;
+      align-items: end;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: "Newsreader", Georgia, serif;
+      font-size: clamp(62px, 9vw, 128px);
+      line-height: .88;
+      font-weight: 600;
+      letter-spacing: -0.035em;
+    }
+
+    h1 em {
+      color: var(--accent);
+      font-style: italic;
+    }
+
+    .lead {
+      margin: 28px 0 0;
+      max-width: 820px;
+      font-family: "Newsreader", Georgia, serif;
+      font-size: clamp(27px, 3vw, 41px);
+      line-height: 1.13;
+      color: #252b31;
+    }
+
+    .photo-card {
+      border: 2px solid var(--ink);
+      background: var(--paper-2);
+      padding: 18px;
+    }
+
+    .photo {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      filter: grayscale(1) contrast(1.03);
+      display: block;
+      border: 1px solid var(--line);
+    }
+
+    .person {
+      margin-top: 14px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 13px;
+      line-height: 1.45;
+      letter-spacing: .03em;
+    }
+
+    .person strong {
+      display: block;
+      font-family: "Newsreader", Georgia, serif;
+      font-size: 28px;
+      line-height: 1;
+      letter-spacing: -.01em;
+      margin-bottom: 5px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      align-content: start;
+    }
+
+    .block {
+      border: 2px solid var(--ink);
+      background: rgba(246, 241, 231, .86);
+      padding: 28px 30px 30px;
+      min-height: 205px;
+    }
+
+    .block.dark {
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    .block.wide {
+      grid-column: span 2;
+      min-height: 0;
+    }
+
+    .eyebrow {
+      margin-bottom: 16px;
+      font-family: "IBM Plex Mono", monospace;
+      color: var(--accent);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .dark .eyebrow { color: #efc9b9; }
+
+    h2 {
+      margin: 0 0 14px;
+      font-family: "Newsreader", Georgia, serif;
+      font-size: clamp(34px, 4vw, 52px);
+      line-height: .98;
+      letter-spacing: -.025em;
+      font-weight: 600;
+    }
+
+    p {
+      margin: 0;
+      font-size: clamp(21px, 2vw, 28px);
+      line-height: 1.24;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .chip {
+      border: 1.5px solid currentColor;
+      padding: 8px 12px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 14px;
+      letter-spacing: .04em;
+      background: rgba(255,255,255,.2);
+    }
+
+    .outcomes {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 16px;
+    }
+
+    .outcome {
+      border-left: 3px solid var(--accent);
+      padding-left: 18px;
+      font-size: clamp(21px, 2vw, 28px);
+      line-height: 1.16;
+      font-weight: 600;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 26px;
+      align-items: start;
+    }
+
+    .terms {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      border: 2px solid var(--ink);
+      background: var(--paper-2);
+    }
+
+    .term {
+      padding: 20px;
+      border-right: 1px solid var(--line);
+    }
+
+    .term:last-child { border-right: 0; }
+
+    .term span {
+      display: block;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .term strong {
+      display: block;
+      font-family: "Newsreader", Georgia, serif;
+      font-size: clamp(26px, 3vw, 38px);
+      line-height: .96;
+    }
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      align-items: flex-end;
+      border-top: 2px solid var(--ink);
+      padding-top: 22px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 15px;
+      letter-spacing: .04em;
+    }
+
+    footer a {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 1px solid var(--line);
+    }
+
+    @media (max-width: 860px) {
+      .sheet { min-height: auto; }
+      header, footer { align-items: flex-start; flex-direction: column; }
+      .hero, .grid, .outcomes, .terms { grid-template-columns: 1fr; }
+      .block.wide { grid-column: span 1; }
+      .photo-card { max-width: 360px; }
+      .term { border-right: 0; border-bottom: 1px solid var(--line); }
+      .term:last-child { border-bottom: 0; }
+    }
+  </style>
+</head>
+<body>
+  <main class="stage">
+    <article class="sheet">
+      <header>
+        <div class="brand">AI Coworking Lab</div>
+        <div class="stamp">Pilot workshop · 90–120 min</div>
+      </header>
+
+      <section class="hero">
+        <div>
+          <h1>From AI <em>FOMO</em><br>to useful work.</h1>
+          <p class="lead">
+            A hands-on community session where freelancers, creators and small business owners turn AI curiosity into one real workflow they can use the same day.
+          </p>
+        </div>
+        <aside class="photo-card">
+          <img class="photo" src="iurii.jpg" alt="Yury Chikhalov">
+          <div class="person">
+            <strong>Yury Chikhalov</strong>
+            AI specialist · entrepreneur · facilitator of business and team sessions
+          </div>
+        </aside>
+      </section>
+
+      <section class="terms">
+        <div class="term"><span>Format</span><strong>Live demo + lab</strong></div>
+        <div class="term"><span>Group</span><strong>15 people</strong></div>
+        <div class="term"><span>Level</span><strong>Beginner to intermediate</strong></div>
+        <div class="term"><span>Pilot</span><strong>Free community event</strong></div>
+      </section>
+
+      <section class="grid">
+        <div class="block dark">
+          <div class="eyebrow">Why now</div>
+          <h2>People know AI matters. They do not know where to start.</h2>
+          <p>That gap creates anxiety, scattered experiments and missed productivity gains.</p>
+        </div>
+
+        <div class="block">
+          <div class="eyebrow">What happens</div>
+          <h2>No passive lecture.</h2>
+          <p>Short context, live tool demo, case clinic, then participants work on their own business tasks with guidance.</p>
+          <div class="chips">
+            <span class="chip">content</span>
+            <span class="chip">automation</span>
+            <span class="chip">client research</span>
+            <span class="chip">productivity</span>
+          </div>
+        </div>
+
+        <div class="block wide">
+          <div class="eyebrow">Participant takeaway</div>
+          <h2>Not inspiration. A working AI scenario.</h2>
+          <div class="outcomes">
+            <div class="outcome">One workflow launched on their own task</div>
+            <div class="outcome">Reusable prompts and practical methods</div>
+            <div class="outcome">Clarity on what to try next</div>
+          </div>
+        </div>
+
+        <div class="block wide">
+          <div class="split">
+            <div>
+              <div class="eyebrow">Value for Impact Hub</div>
+              <h2>A practical innovation event for the community.</h2>
+            </div>
+            <div>
+              <div class="eyebrow">Pilot ask</div>
+              <p><strong>Impact Hub:</strong> venue, promotion, registration, social media.<br><strong>We bring:</strong> content, facilitation, live demos, materials, follow-up.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        <div>Next step: 30-minute alignment call to confirm date, audience and format.</div>
+        <div><a href="mailto:chikhalov@gmail.com">chikhalov@gmail.com</a> · LinkedIn: Yury + partner</div>
+      </footer>
+    </article>
+  </main>
+</body>
+</html>
