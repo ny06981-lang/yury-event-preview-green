@@ -1,0 +1,865 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Аналитика менеджеров</title>
+  <style>
+    :root {
+      --bg: #f5f7fa;
+      --panel: #ffffff;
+      --soft: #f9fbfc;
+      --text: #17202a;
+      --muted: #667789;
+      --line: #dbe3ea;
+      --teal: #1f9d96;
+      --green: #2e9f5f;
+      --blue: #2f72d8;
+      --orange: #d9822b;
+      --red: #c23b47;
+      --violet: #6e5cc2;
+      --shadow: 0 18px 44px rgba(26, 42, 59, .08);
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      letter-spacing: 0;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 18px 28px;
+      background: rgba(255, 255, 255, .94);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(14px);
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--teal);
+      font-size: 23px;
+      line-height: 1.15;
+      font-weight: 760;
+    }
+
+    h1 span { color: #b1363f; }
+
+    .subtitle {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .segmented, .search, .select {
+      display: inline-flex;
+      align-items: center;
+      min-height: 36px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+
+    .segmented button {
+      min-width: 76px;
+      height: 34px;
+      padding: 0 12px;
+      color: var(--muted);
+      background: transparent;
+      border: 0;
+      border-right: 1px solid var(--line);
+      font: inherit;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .segmented button:last-child { border-right: 0; }
+    .segmented button.active { color: #fff; background: var(--text); }
+
+    input, select {
+      width: 100%;
+      height: 34px;
+      padding: 0 12px;
+      color: var(--text);
+      background: transparent;
+      border: 0;
+      outline: 0;
+      font: inherit;
+      font-size: 13px;
+    }
+
+    .search { width: 220px; }
+    .select { width: 180px; }
+
+    main {
+      max-width: 1480px;
+      margin: 0 auto;
+      padding: 22px 28px 36px;
+    }
+
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(150px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .kpi, .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .kpi {
+      min-height: 122px;
+      padding: 14px;
+    }
+
+    .kpi-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .mark {
+      width: 9px;
+      height: 9px;
+      margin-top: 3px;
+      border-radius: 50%;
+      background: var(--blue);
+    }
+
+    .kpi:nth-child(2) .mark { background: var(--teal); }
+    .kpi:nth-child(3) .mark { background: var(--green); }
+    .kpi:nth-child(4) .mark { background: var(--violet); }
+    .kpi:nth-child(5) .mark { background: var(--orange); }
+    .kpi:nth-child(6) .mark { background: var(--red); }
+
+    .kpi-value {
+      margin-top: 12px;
+      font-size: 27px;
+      line-height: 1;
+      font-weight: 800;
+    }
+
+    .kpi-sub {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .delta { color: var(--green); font-weight: 800; }
+    .delta.warn { color: var(--orange); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(360px, .8fr);
+      gap: 16px;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .panel { overflow: hidden; }
+
+    .panel-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 16px 18px 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.2;
+      font-weight: 780;
+    }
+
+    .panel-note {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .body { padding: 16px 18px 18px; }
+
+    .sort {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .sort button {
+      height: 30px;
+      padding: 0 10px;
+      color: var(--muted);
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      font: inherit;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .sort button.active {
+      color: #fff;
+      background: var(--text);
+      border-color: var(--text);
+    }
+
+    .leader-list, .stack-list, .insights {
+      display: grid;
+      gap: 11px;
+    }
+
+    .leader-row {
+      display: grid;
+      grid-template-columns: 34px minmax(150px, 1.2fr) minmax(180px, 2fr) 92px;
+      align-items: center;
+      gap: 12px;
+      min-height: 54px;
+    }
+
+    .rank {
+      display: grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      color: var(--muted);
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .manager {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 13px;
+      font-weight: 760;
+    }
+
+    .meta {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .bar-wrap {
+      width: 100%;
+      height: 12px;
+      background: #edf2f6;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .bar {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--teal), var(--green));
+    }
+
+    .metric {
+      text-align: right;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .insight {
+      display: grid;
+      grid-template-columns: 8px minmax(0, 1fr);
+      gap: 10px;
+      padding: 11px 12px;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+
+    .insight::before {
+      content: "";
+      width: 8px;
+      min-height: 36px;
+      border-radius: 999px;
+      background: var(--green);
+    }
+
+    .insight.warn::before { background: var(--orange); }
+    .insight.risk::before { background: var(--red); }
+
+    .insight-title {
+      font-size: 13px;
+      line-height: 1.35;
+      font-weight: 800;
+    }
+
+    .insight-text {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .legend {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--blue);
+    }
+
+    .work { background: var(--orange); }
+    .ready { background: var(--blue); }
+    .issued { background: var(--teal); }
+    .processed { background: var(--green); }
+
+    .stack-row {
+      display: grid;
+      grid-template-columns: minmax(135px, .8fr) minmax(220px, 1.7fr) 56px;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .stack {
+      display: flex;
+      width: 100%;
+      height: 15px;
+      background: #edf2f6;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .segment { height: 100%; min-width: 2px; }
+
+    .scatter {
+      position: relative;
+      min-height: 312px;
+      background:
+        linear-gradient(var(--line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--line) 1px, transparent 1px);
+      background-size: 100% 25%, 25% 100%;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .cross-x, .cross-y {
+      position: absolute;
+      background: rgba(23, 32, 42, .2);
+    }
+
+    .cross-x { left: 0; top: 50%; width: 100%; height: 1px; }
+    .cross-y { left: 50%; top: 0; width: 1px; height: 100%; }
+
+    .q {
+      position: absolute;
+      color: rgba(23, 32, 42, .55);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .q1 { top: 10px; left: 12px; }
+    .q2 { top: 10px; right: 12px; }
+    .q3 { bottom: 10px; left: 12px; }
+    .q4 { bottom: 10px; right: 12px; }
+
+    .bubble {
+      position: absolute;
+      display: grid;
+      place-items: center;
+      min-width: 34px;
+      height: 28px;
+      padding: 0 8px;
+      color: #fff;
+      background: var(--teal);
+      border: 2px solid #fff;
+      border-radius: 999px;
+      box-shadow: 0 8px 22px rgba(30, 42, 54, .18);
+      transform: translate(-50%, 50%);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .bubble.leader { background: var(--green); }
+    .bubble.warn { background: var(--orange); }
+    .bubble.risk { background: var(--red); }
+
+    .table-wrap { width: 100%; overflow: auto; }
+
+    table {
+      width: 100%;
+      min-width: 1080px;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    th, td {
+      padding: 10px 11px;
+      border-bottom: 1px solid var(--line);
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    th:first-child, td:first-child {
+      position: sticky;
+      left: 0;
+      text-align: left;
+      background: var(--panel);
+    }
+
+    th {
+      color: var(--muted);
+      background: var(--soft);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 88px;
+      height: 24px;
+      padding: 0 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .status.leader { color: #0f6b3d; background: #dff3e7; }
+    .status.warn { color: #8a4b09; background: #fff0dc; }
+    .status.risk { color: #9b2431; background: #ffe4e7; }
+    .status.normal { color: #275d9f; background: #e3efff; }
+
+    .footer {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    @media (max-width: 1180px) {
+      .kpis { grid-template-columns: repeat(3, minmax(160px, 1fr)); }
+      .grid, .two-col { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 760px) {
+      .topbar { position: static; align-items: stretch; flex-direction: column; padding: 16px; }
+      main { padding: 16px; }
+      .controls { display: grid; grid-template-columns: 1fr; }
+      .search, .select { width: 100%; }
+      .segmented { justify-self: start; }
+      .kpis { grid-template-columns: 1fr; }
+      .panel-head { align-items: stretch; flex-direction: column; }
+      .leader-row, .stack-row { grid-template-columns: 1fr; gap: 7px; }
+      .rank { display: none; }
+      .metric { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>Аналитика <span>Менеджеры</span></h1>
+      <div class="subtitle">Публичный демо-фронт: анонимные менеджеры, синтетические данные</div>
+    </div>
+    <div class="controls">
+      <div class="segmented" id="periodControl">
+        <button type="button" data-period="week">Неделя</button>
+        <button type="button" data-period="30" class="active">30 дней</button>
+        <button type="button" data-period="90">90 дней</button>
+      </div>
+      <label class="search"><input id="managerSearch" type="search" placeholder="Поиск менеджера"></label>
+      <label class="select">
+        <select id="statusFilter">
+          <option value="all">Все статусы</option>
+          <option value="leader">Лидеры</option>
+          <option value="normal">Норма</option>
+          <option value="warn">Перегружены</option>
+          <option value="risk">Зона внимания</option>
+        </select>
+      </label>
+    </div>
+  </header>
+
+  <main>
+    <section class="kpis" id="kpis"></section>
+
+    <section class="grid">
+      <article class="panel">
+        <div class="panel-head">
+          <div>
+            <h2 class="panel-title">Рейтинг менеджеров</h2>
+            <div class="panel-note">Сравнение по деньгам, обработке и средней комиссии</div>
+          </div>
+          <div class="sort" id="sortControl">
+            <button type="button" data-sort="commission" class="active">Комиссия</button>
+            <button type="button" data-sort="processed">Обработка</button>
+            <button type="button" data-sort="avg">Средняя</button>
+            <button type="button" data-sort="workload">Нагрузка</button>
+          </div>
+        </div>
+        <div class="body"><div class="leader-list" id="leaderList"></div></div>
+      </article>
+
+      <aside class="panel">
+        <div class="panel-head">
+          <div>
+            <h2 class="panel-title">Что требует внимания</h2>
+            <div class="panel-note">Автоматические выводы по текущему периоду</div>
+          </div>
+        </div>
+        <div class="body"><div class="insights" id="insights"></div></div>
+      </aside>
+    </section>
+
+    <section class="two-col">
+      <article class="panel">
+        <div class="panel-head">
+          <div>
+            <h2 class="panel-title">Воронка заказов</h2>
+            <div class="panel-note">Баланс между работой, готовыми, выданными и обработанными</div>
+          </div>
+          <div class="legend">
+            <span><i class="dot work"></i>В работе</span>
+            <span><i class="dot ready"></i>Готовые</span>
+            <span><i class="dot issued"></i>Выданные</span>
+            <span><i class="dot processed"></i>Обработанные</span>
+          </div>
+        </div>
+        <div class="body"><div class="stack-list" id="funnelList"></div></div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-head">
+          <div>
+            <h2 class="panel-title">Карта эффективности</h2>
+            <div class="panel-note">X: обработанные заказы, Y: сумма комиссии</div>
+          </div>
+        </div>
+        <div class="body">
+          <div class="scatter" id="scatter">
+            <div class="cross-x"></div>
+            <div class="cross-y"></div>
+            <div class="q q1">Деньги без обработки</div>
+            <div class="q q2">Лидеры</div>
+            <div class="q q3">Зона внимания</div>
+            <div class="q q4">Потенциал</div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="panel" style="margin-top:16px">
+      <div class="panel-head">
+        <div>
+          <h2 class="panel-title">Детализация по менеджерам</h2>
+          <div class="panel-note">Компактная таблица с расчетными статусами</div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Менеджер</th>
+              <th>Комментарии</th>
+              <th>В работе</th>
+              <th>Готовые</th>
+              <th>Выданные</th>
+              <th>Обработанные</th>
+              <th>Сумма комиссии</th>
+              <th>Средняя комиссия</th>
+              <th>Рейтинг 30</th>
+              <th>Рейтинг 90</th>
+              <th>Статус</th>
+            </tr>
+          </thead>
+          <tbody id="detailRows"></tbody>
+        </table>
+      </div>
+      <div class="body">
+        <div class="footer">Это публичная демо-версия. Персональные данные и исходные коммерческие метрики заменены на синтетические значения.</div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const managers = [
+      { name: "Менеджер 01", comments: { week: 41, 30: 218, 90: 520 }, orders: { work: 18, readyWeek: 5, ready30: 19, issuedWeek: 9, issued30: 36, processedWeek: 15, processed30: 58, processed90: 128 }, commission: { processedWeek: 22000, processed30: 132000, processed90: 250000 }, avg: { processed30: 2275 }, rating30: 4.9, rating90: 5.0 },
+      { name: "Менеджер 02", comments: { week: 56, 30: 310, 90: 650 }, orders: { work: 24, readyWeek: 7, ready30: 26, issuedWeek: 13, issued30: 48, processedWeek: 18, processed30: 64, processed90: 143 }, commission: { processedWeek: 24500, processed30: 118000, processed90: 230000 }, avg: { processed30: 1844 }, rating30: 4.8, rating90: 4.9 },
+      { name: "Менеджер 03", comments: { week: 38, 30: 205, 90: 460 }, orders: { work: 31, readyWeek: 4, ready30: 16, issuedWeek: 8, issued30: 29, processedWeek: 12, processed30: 47, processed90: 101 }, commission: { processedWeek: 18100, processed30: 96000, processed90: 184000 }, avg: { processed30: 2043 }, rating30: 4.7, rating90: 4.8 },
+      { name: "Менеджер 04", comments: { week: 72, 30: 420, 90: 880 }, orders: { work: 44, readyWeek: 18, ready30: 58, issuedWeek: 28, issued30: 160, processedWeek: 44, processed30: 310, processed90: 620 }, commission: { processedWeek: 15500, processed30: 72000, processed90: 145000 }, avg: { processed30: 232 }, rating30: 5.0, rating90: 5.0 },
+      { name: "Менеджер 05", comments: { week: 95, 30: 540, 90: 980 }, orders: { work: 69, readyWeek: 22, ready30: 72, issuedWeek: 35, issued30: 210, processedWeek: 52, processed30: 360, processed90: 760 }, commission: { processedWeek: 14200, processed30: 68000, processed90: 130000 }, avg: { processed30: 189 }, rating30: 4.9, rating90: 5.0 },
+      { name: "Менеджер 06", comments: { week: 63, 30: 390, 90: 720 }, orders: { work: 52, readyWeek: 15, ready30: 44, issuedWeek: 21, issued30: 130, processedWeek: 38, processed30: 240, processed90: 520 }, commission: { processedWeek: 12600, processed30: 61000, processed90: 121000 }, avg: { processed30: 254 }, rating30: 4.9, rating90: 5.0 },
+      { name: "Менеджер 07", comments: { week: 22, 30: 160, 90: 370 }, orders: { work: 16, readyWeek: 3, ready30: 12, issuedWeek: 6, issued30: 24, processedWeek: 10, processed30: 42, processed90: 92 }, commission: { processedWeek: 9600, processed30: 54000, processed90: 110000 }, avg: { processed30: 1286 }, rating30: 4.5, rating90: 4.7 },
+      { name: "Менеджер 08", comments: { week: 110, 30: 680, 90: 1180 }, orders: { work: 88, readyWeek: 30, ready30: 82, issuedWeek: 44, issued30: 245, processedWeek: 70, processed30: 410, processed90: 820 }, commission: { processedWeek: 10500, processed30: 52000, processed90: 99000 }, avg: { processed30: 127 }, rating30: 4.8, rating90: 5.0 },
+      { name: "Менеджер 09", comments: { week: 31, 30: 175, 90: 340 }, orders: { work: 8, readyWeek: 2, ready30: 9, issuedWeek: 4, issued30: 18, processedWeek: 7, processed30: 30, processed90: 66 }, commission: { processedWeek: 6400, processed30: 26000, processed90: 58000 }, avg: { processed30: 867 }, rating30: 4.3, rating90: 4.5 },
+      { name: "Менеджер 10", comments: { week: 8, 30: 45, 90: 120 }, orders: { work: 3, readyWeek: 1, ready30: 3, issuedWeek: 1, issued30: 8, processedWeek: 2, processed30: 12, processed90: 30 }, commission: { processedWeek: 1200, processed30: 6000, processed90: 18000 }, avg: { processed30: 500 }, rating30: 3.8, rating90: 4.1 }
+    ];
+
+    const state = { period: "30", sort: "commission", query: "", status: "all" };
+    const format = new Intl.NumberFormat("ru-RU");
+
+    function byPeriod(manager, group, metric) {
+      if (state.period === "week") return manager[group][metric + "Week"] ?? manager[group].week ?? 0;
+      if (state.period === "90") return manager[group][metric + "90"] ?? manager[group][90] ?? 0;
+      return manager[group][metric + "30"] ?? manager[group][30] ?? 0;
+    }
+
+    function periodLabel() {
+      return state.period === "week" ? "за неделю" : state.period === "90" ? "за 90 дней" : "за 30 дней";
+    }
+
+    function classify(manager) {
+      const commission = byPeriod(manager, "commission", "processed");
+      const processed = byPeriod(manager, "orders", "processed");
+      const work = manager.orders.work;
+      const avg = manager.avg.processed30;
+      if (commission > 90000 && processed >= 45) return "leader";
+      if (work > 50 && processed < 260) return "warn";
+      if (commission < 10000 || manager.rating30 < 4.2 || processed < 16) return "risk";
+      if (avg > 1000 && processed >= 30) return "leader";
+      return "normal";
+    }
+
+    function statusLabel(status) {
+      return { leader: "Лидер", normal: "Норма", warn: "Контроль", risk: "Внимание" }[status];
+    }
+
+    function filtered() {
+      return managers
+        .filter((manager) => manager.name.toLowerCase().includes(state.query.toLowerCase()))
+        .filter((manager) => state.status === "all" || classify(manager) === state.status);
+    }
+
+    function sortValue(manager) {
+      if (state.sort === "processed") return byPeriod(manager, "orders", "processed");
+      if (state.sort === "avg") return manager.avg.processed30;
+      if (state.sort === "workload") return manager.orders.work;
+      return byPeriod(manager, "commission", "processed");
+    }
+
+    function totals(data) {
+      const sum = (getter) => data.reduce((total, item) => total + getter(item), 0);
+      const commission = sum((manager) => byPeriod(manager, "commission", "processed"));
+      const processed = sum((manager) => byPeriod(manager, "orders", "processed"));
+      return {
+        commission,
+        processed,
+        avg: processed ? Math.round(commission / processed) : 0,
+        managers: data.length,
+        work: sum((manager) => manager.orders.work),
+        ready: sum((manager) => byPeriod(manager, "orders", "ready"))
+      };
+    }
+
+    function renderKpis(data) {
+      const total = totals(data);
+      const kpis = [
+        ["Комиссии " + periodLabel(), format.format(total.commission), "+12% к прошлому периоду", ""],
+        ["Заказы обработаны", format.format(total.processed), "+8% динамика", ""],
+        ["Средняя комиссия", format.format(total.avg), "на обработанный заказ", ""],
+        ["Активные менеджеры", total.managers, "в текущем фильтре", ""],
+        ["Заказы в работе", format.format(total.work), "проверить нагрузку", "warn"],
+        ["Готовые к выдаче", format.format(total.ready), "узкое место воронки", "warn"]
+      ];
+
+      document.getElementById("kpis").innerHTML = kpis.map(([label, value, sub, tone]) => `
+        <article class="kpi">
+          <div class="kpi-label"><span>${label}</span><i class="mark"></i></div>
+          <div class="kpi-value">${value}</div>
+          <div class="kpi-sub"><span>${sub}</span><span class="delta ${tone}">${tone ? "контроль" : "рост"}</span></div>
+        </article>
+      `).join("");
+    }
+
+    function renderLeaders(data) {
+      const sorted = [...data].sort((a, b) => sortValue(b) - sortValue(a));
+      const max = Math.max(...sorted.map(sortValue), 1);
+      document.getElementById("leaderList").innerHTML = sorted.map((manager, index) => {
+        const value = sortValue(manager);
+        const commission = byPeriod(manager, "commission", "processed");
+        const processed = byPeriod(manager, "orders", "processed");
+        const width = Math.max(3, Math.round((value / max) * 100));
+        return `
+          <div class="leader-row">
+            <div class="rank">${index + 1}</div>
+            <div><div class="manager">${manager.name}</div><div class="meta">${processed} обработано · ср. ${format.format(manager.avg.processed30)}</div></div>
+            <div class="bar-wrap"><div class="bar" style="width:${width}%"></div></div>
+            <div class="metric">${state.sort === "commission" ? format.format(commission) : format.format(value)}</div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderInsights(data) {
+      const byCommission = [...data].sort((a, b) => byPeriod(b, "commission", "processed") - byPeriod(a, "commission", "processed"));
+      const byWork = [...data].sort((a, b) => b.orders.work - a.orders.work);
+      const lowAvg = [...data].filter((manager) => manager.avg.processed30 < 200).sort((a, b) => a.avg.processed30 - b.avg.processed30);
+      const byProcessed = [...data].sort((a, b) => byPeriod(b, "orders", "processed") - byPeriod(a, "orders", "processed"));
+      const items = [
+        ["", `${byCommission[0]?.name ?? "Нет данных"} приносит максимум комиссии`, `${format.format(byPeriod(byCommission[0] ?? data[0], "commission", "processed"))} ${periodLabel()}`],
+        ["warn", `${byWork[0]?.name ?? "Нет данных"} имеет самую высокую нагрузку`, `${byWork[0]?.orders.work ?? 0} заказов в работе, стоит проверить очередь`],
+        ["risk", `${lowAvg[0]?.name ?? "Нет данных"} проседает по средней комиссии`, lowAvg[0] ? `Средняя комиссия ${format.format(lowAvg[0].avg.processed30)}` : "Критичных отклонений не найдено"],
+        ["", `${byProcessed[0]?.name ?? "Нет данных"} лидирует по обработке`, `${format.format(byPeriod(byProcessed[0] ?? data[0], "orders", "processed"))} обработанных заказов`]
+      ];
+      document.getElementById("insights").innerHTML = items.map(([tone, title, text]) => `
+        <div class="insight ${tone}"><div><div class="insight-title">${title}</div><div class="insight-text">${text}</div></div></div>
+      `).join("");
+    }
+
+    function renderFunnel(data) {
+      const sorted = [...data].sort((a, b) => b.orders.work - a.orders.work).slice(0, 8);
+      const max = Math.max(...sorted.map((manager) =>
+        manager.orders.work + byPeriod(manager, "orders", "ready") + byPeriod(manager, "orders", "issued") + byPeriod(manager, "orders", "processed")
+      ), 1);
+      document.getElementById("funnelList").innerHTML = sorted.map((manager) => {
+        const values = {
+          work: manager.orders.work,
+          ready: byPeriod(manager, "orders", "ready"),
+          issued: byPeriod(manager, "orders", "issued"),
+          processed: byPeriod(manager, "orders", "processed")
+        };
+        const total = values.work + values.ready + values.issued + values.processed;
+        return `
+          <div class="stack-row">
+            <div><div class="manager">${manager.name}</div><div class="meta">${total} заказов в воронке</div></div>
+            <div class="stack">
+              <div class="segment work" style="width:${(values.work / max) * 100}%"></div>
+              <div class="segment ready" style="width:${(values.ready / max) * 100}%"></div>
+              <div class="segment issued" style="width:${(values.issued / max) * 100}%"></div>
+              <div class="segment processed" style="width:${(values.processed / max) * 100}%"></div>
+            </div>
+            <div class="metric">${format.format(total)}</div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderScatter(data) {
+      const scatter = document.getElementById("scatter");
+      scatter.querySelectorAll(".bubble").forEach((node) => node.remove());
+      const maxX = Math.max(...data.map((manager) => byPeriod(manager, "orders", "processed")), 1);
+      const maxY = Math.max(...data.map((manager) => byPeriod(manager, "commission", "processed")), 1);
+      data.forEach((manager) => {
+        const node = document.createElement("div");
+        node.className = `bubble ${classify(manager)}`;
+        node.style.left = `${8 + (byPeriod(manager, "orders", "processed") / maxX) * 84}%`;
+        node.style.bottom = `${8 + (byPeriod(manager, "commission", "processed") / maxY) * 82}%`;
+        node.title = `${manager.name}: ${format.format(byPeriod(manager, "commission", "processed"))} комиссии`;
+        node.textContent = manager.name.replace("Менеджер ", "");
+        scatter.appendChild(node);
+      });
+    }
+
+    function renderTable(data) {
+      document.getElementById("detailRows").innerHTML = [...data]
+        .sort((a, b) => byPeriod(b, "commission", "processed") - byPeriod(a, "commission", "processed"))
+        .map((manager) => {
+          const status = classify(manager);
+          return `
+            <tr>
+              <td>${manager.name}</td>
+              <td>${format.format(state.period === "week" ? manager.comments.week : state.period === "90" ? manager.comments[90] : manager.comments[30])}</td>
+              <td>${format.format(manager.orders.work)}</td>
+              <td>${format.format(byPeriod(manager, "orders", "ready"))}</td>
+              <td>${format.format(byPeriod(manager, "orders", "issued"))}</td>
+              <td>${format.format(byPeriod(manager, "orders", "processed"))}</td>
+              <td>${format.format(byPeriod(manager, "commission", "processed"))}</td>
+              <td>${format.format(manager.avg.processed30)}</td>
+              <td>${manager.rating30.toFixed(1)}</td>
+              <td>${manager.rating90.toFixed(1)}</td>
+              <td><span class="status ${status}">${statusLabel(status)}</span></td>
+            </tr>
+          `;
+        }).join("");
+    }
+
+    function render() {
+      const data = filtered();
+      renderKpis(data);
+      renderLeaders(data);
+      renderInsights(data);
+      renderFunnel(data);
+      renderScatter(data);
+      renderTable(data);
+    }
+
+    document.getElementById("periodControl").addEventListener("click", (event) => {
+      const button = event.target.closest("button");
+      if (!button) return;
+      state.period = button.dataset.period;
+      document.querySelectorAll("#periodControl button").forEach((item) => item.classList.toggle("active", item === button));
+      render();
+    });
+
+    document.getElementById("sortControl").addEventListener("click", (event) => {
+      const button = event.target.closest("button");
+      if (!button) return;
+      state.sort = button.dataset.sort;
+      document.querySelectorAll("#sortControl button").forEach((item) => item.classList.toggle("active", item === button));
+      render();
+    });
+
+    document.getElementById("managerSearch").addEventListener("input", (event) => {
+      state.query = event.target.value.trim();
+      render();
+    });
+
+    document.getElementById("statusFilter").addEventListener("change", (event) => {
+      state.status = event.target.value;
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>
